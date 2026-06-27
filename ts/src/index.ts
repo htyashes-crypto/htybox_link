@@ -6,3 +6,6 @@ export * from "./e2e";
 export * from "./frames";
 export * from "./offer";
 export * from "./client";
+export * from "./transport-ws";
+export * from "./connect";
+export * from "./backoff";

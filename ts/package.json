@@ -7,7 +7,8 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "smoke:connect": "tsx scripts/ws-smoke-connect.ts"
   },
   "dependencies": {
     "tweetnacl": "^1.0.3"
@@ -16,6 +17,7 @@
     "typescript": "^5.8.3",
     "vitest": "^3.2.4",
     "@types/node": "^22.10.0",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "tsx": "^4.19.0"
   }
 }
