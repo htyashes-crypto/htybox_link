@@ -38,6 +38,8 @@ export interface DaemonClientOptions {
   appVersion: string;
   /** 若提供则启用 E2E：所有帧用该共享密钥（nacl.box.before 结果）封装/解封。 */
   e2eShared?: Uint8Array;
+  /** RPC 请求超时 ms（无响应即 reject，spec §10）；默认 15000。 */
+  requestTimeoutMs?: number;
 }
 
 type OutputHandler = (revision: bigint, data: Uint8Array) => void;
@@ -73,8 +75,21 @@ export class DaemonClient {
   /** 发一次 RPC 请求，按 requestId 匹配响应（rpc_error → reject）。 */
   request<R = unknown>(domainOp: string, params: Record<string, unknown>): Promise<R> {
     const requestId = `c${this.nextId++}`;
+    const timeoutMs = this.opts.requestTimeoutMs ?? 15000;
     return new Promise<R>((resolve, reject) => {
-      this.pending.set(requestId, { resolve: resolve as (v: unknown) => void, reject });
+      const timer = setTimeout(() => {
+        if (this.pending.delete(requestId)) reject(new Error(`RPC 超时(${timeoutMs}ms): ${domainOp}`));
+      }, timeoutMs);
+      this.pending.set(requestId, {
+        resolve: (v) => {
+          clearTimeout(timer);
+          (resolve as (v: unknown) => void)(v);
+        },
+        reject: (e) => {
+          clearTimeout(timer);
+          reject(e);
+        },
+      });
       this.sendJson({ type: reqType(domainOp), requestId, ...params });
     });
   }

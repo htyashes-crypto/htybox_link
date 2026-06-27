@@ -17,6 +17,8 @@ export interface ConnectLanOptions {
   /** 自定义 WebSocket 工厂（浏览器外如 node smoke 注入 `ws`）；默认用全局 WebSocket。 */
   wsFactory?: (url: string) => WebSocketLike;
   handshakeTimeoutMs?: number;
+  /** WS 断开回调（供上层做重连）。 */
+  onClose?: () => void;
 }
 
 export interface LanConnection {
@@ -45,6 +47,7 @@ export async function connectLan(offer: ConnectionOffer, opts: ConnectLanOptions
   // 同步装配：transport 接管 ws.onmessage（回放早到密文）→ DaemonClient（构造即 onMessage）。
   // handshake 的 cleanup 与此处之间无 await，事件循环不会插入新 ws 消息 → 零丢帧。
   const transport = new BrowserWsTransport(ws, { preBuffered: earlyBinaries });
+  if (opts.onClose) transport.onClose(opts.onClose);
   const clientOpts: DaemonClientOptions = {
     clientId: opts.clientId,
     clientType: opts.clientType ?? "ios",
