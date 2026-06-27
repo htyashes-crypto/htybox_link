@@ -25,6 +25,15 @@ pub mod types {
     pub const EVT_TERMINAL_EXIT: &str = "terminal.exit";
     pub const EVT_TERMINAL_TITLE: &str = "terminal.title";
     pub const EVT_WORKSPACES_UPDATE: &str = "host.workspaces.update";
+    // L5-4P-2：只读 catalog 域（镜像桌面左侧 Content）
+    pub const CATALOG_SKILLS_LIST_REQ: &str = "catalog.skills.list.request";
+    pub const CATALOG_SKILLS_LIST_RESP: &str = "catalog.skills.list.response";
+    pub const CATALOG_MEMORIES_LIST_REQ: &str = "catalog.memories.list.request";
+    pub const CATALOG_MEMORIES_LIST_RESP: &str = "catalog.memories.list.response";
+    pub const CATALOG_FILES_LIST_REQ: &str = "catalog.files.list.request";
+    pub const CATALOG_FILES_LIST_RESP: &str = "catalog.files.list.response";
+    pub const CATALOG_SESSIONS_LIST_REQ: &str = "catalog.sessions.list.request";
+    pub const CATALOG_SESSIONS_LIST_RESP: &str = "catalog.sessions.list.response";
 }
 
 /// 通用请求信封：`{type, requestId, ...params(flatten)}`（03-spec §4.2）。

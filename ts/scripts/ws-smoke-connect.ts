@@ -6,7 +6,15 @@ import { join } from "node:path";
 import { WebSocket } from "ws";
 import { connectLan } from "../src/connect";
 import { keyPairFromSecret, publicB64 } from "../src/e2e";
-import { RpcTypes, type CreateTerminalResult, type WorkspacesResult } from "../src/messages";
+import {
+  RpcTypes,
+  type CreateTerminalResult,
+  type FilesResult,
+  type MemoriesResult,
+  type SessionsResult,
+  type SkillsResult,
+  type WorkspacesResult,
+} from "../src/messages";
 import type { WebSocketLike } from "../src/transport-ws";
 
 const PORT = Number(process.argv[2] || 6767);
@@ -61,6 +69,17 @@ function waitFor(cond: () => boolean, ms: number): Promise<void> {
 
   const wsr = await conn.client.request<WorkspacesResult>(RpcTypes.hostWorkspacesList, {});
   console.log("· host.workspaces.list →", wsr.workspaces.length, "工作区, active:", wsr.activeId ?? "(无)");
+
+  const sk = await conn.client.request<SkillsResult>(RpcTypes.catalogSkillsList, { projectDir: "" });
+  const mem = await conn.client.request<MemoriesResult>(RpcTypes.catalogMemoriesList, { slug: "G--hty-workflows" });
+  const files = await conn.client.request<FilesResult>(RpcTypes.catalogFilesList, { dir: "G:\\hty_workflows" });
+  const ses = await conn.client.request<SessionsResult>(RpcTypes.catalogSessionsList, { cwd: "G:\\hty_workflows\\HtyBox" });
+  console.log(
+    "· catalog: skills(user/plugin)=" + sk.skills.length +
+      " memories(G--hty-workflows)=" + mem.memories.length +
+      " files(G:\\hty_workflows)=" + files.entries.length +
+      " sessions=" + ses.claude.length + "claude/" + ses.codex.length + "codex",
+  );
 
   const cr = await conn.client.request<CreateTerminalResult>(RpcTypes.terminalCreate, { cols: 80, rows: 24 });
   console.log("· terminal.create →", cr.terminalId);

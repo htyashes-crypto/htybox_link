@@ -127,6 +127,13 @@
 ### 5.4 workspace 域（v1 最小）
 - `workspace.title.set.request{ workspaceId, title }` → `response{ payload:{} }`（可选）。
 
+### 5.5 catalog 域（只读镜像，L5-4P-2）
+- `catalog.skills.list.request{ projectDir }` → `response{ payload:{ skills:[{ name, description, path, source, invoke }] } }`：列工作区 skills（scan_skills；projectDir 空=仅用户/插件级）。
+- `catalog.memories.list.request{ slug }` → `response{ payload:{ memories:[{ name, description, memType, path }] } }`：列某 project slug 的 memories。
+- `catalog.files.list.request{ dir }` → `response{ payload:{ entries:[{ name, path, isDir }] } }`：列目录一层（懒加载，逐层下钻）。
+- `catalog.sessions.list.request{ cwd }` → `response{ payload:{ claude:[{ id, label, ts, path }], codex:[{ ... }] } }`：列该工作区 claude/codex 会话。
+- 均**只读**镜像桌面左侧 Content；写/注入/打开/删除等操作后续按需扩展。
+
 > v1 不含 agent/chat/schedule 等高级域——先把"远程看&操控终端"打通；后续按 paseo 域扩展，遵守 §1 兼容铁律。
 
 ## 6. 终端二进制帧

@@ -109,6 +109,45 @@ export interface WorkspacesResult {
   activeId?: string;
 }
 
+// ── catalog 域（只读镜像，§5.5）──
+export interface Skill {
+  name: string;
+  description: string;
+  path: string;
+  source: string;
+  invoke: string;
+}
+export interface MemoryItem {
+  name: string;
+  description: string;
+  memType: string;
+  path: string;
+}
+export interface DirEntry {
+  name: string;
+  path: string;
+  isDir: boolean;
+}
+export interface SessionRef {
+  id: string;
+  label: string;
+  ts: number;
+  path: string;
+}
+export interface SkillsResult {
+  skills: Skill[];
+}
+export interface MemoriesResult {
+  memories: MemoryItem[];
+}
+export interface FilesResult {
+  entries: DirEntry[];
+}
+export interface SessionsResult {
+  claude: SessionRef[];
+  codex: SessionRef[];
+}
+
 // ── 事件 payload（§5.2）──
 export interface TerminalExitEvent {
   terminalId: string;
@@ -155,6 +194,10 @@ export const RpcTypes = {
   terminalKill: "terminal.kill",
   terminalRename: "terminal.rename",
   hostWorkspacesList: "host.workspaces.list",
+  catalogSkillsList: "catalog.skills.list",
+  catalogMemoriesList: "catalog.memories.list",
+  catalogFilesList: "catalog.files.list",
+  catalogSessionsList: "catalog.sessions.list",
   evtTerminalExit: "terminal.exit",
   evtTerminalTitle: "terminal.title",
   evtWorkspacesUpdate: "host.workspaces.update",
