@@ -7,11 +7,14 @@ use base64::engine::general_purpose::STANDARD;
 use base64::Engine;
 use crypto_box::{
     aead::{Aead, AeadCore, OsRng},
-    PublicKey, SalsaBox, SecretKey,
+    PublicKey, SecretKey,
 };
 use serde::{Deserialize, Serialize};
 
 use crate::{LinkError, Result};
+
+/// 协商出的加密盒类型（X25519 预计算 + XSalsa20-Poly1305）。调用方持有它做 seal/open。
+pub use crypto_box::SalsaBox;
 
 /// 公钥/私钥字节数（Curve25519）。
 pub const KEY_SIZE: usize = 32;

@@ -61,8 +61,9 @@ const hello = (id) => ({ type: "hello", clientId: id, clientType: "cli", protoco
   const cr = await rpc(a, { type: "terminal.create.request", requestId: "a1", cols: 80, rows: 24 });
   const termId = cr.payload.terminalId;
   const sa = await rpc(a, { type: "terminal.subscribe.request", requestId: "a2", terminalId: termId, restore: { mode: "live" } });
+  const waitA1 = waitMarker(a, "SHARE1"); // 发送前先挂监听，避免回显落在监听之前
   a.send(tf(0x02, sa.payload.slot, enc("echo SHARE1\r\n")));
-  if (!(await waitMarker(a, "SHARE1"))) fail("A 未见 SHARE1");
+  if (!(await waitA1)) fail("A 未见 SHARE1");
   console.log("· A 终端产出 SHARE1");
 
   const b = await conn();
