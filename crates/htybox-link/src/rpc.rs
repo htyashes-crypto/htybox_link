@@ -188,8 +188,12 @@ pub struct WorkspaceInfo {
 
 /// `host.workspaces.list.response` / `host.workspaces.update` payload。
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct WorkspacesResult {
     pub workspaces: Vec<WorkspaceInfo>,
+    /// 当前激活工作区 id（可空；客户端默认定位到它）。
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub active_id: Option<String>,
 }
 
 // ── 事件 payload ──────────────────────────────────────────────────────

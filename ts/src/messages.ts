@@ -106,6 +106,7 @@ export interface WorkspaceInfo {
 }
 export interface WorkspacesResult {
   workspaces: WorkspaceInfo[];
+  activeId?: string;
 }
 
 // ── 事件 payload（§5.2）──

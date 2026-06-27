@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { WebSocket } from "ws";
 import { connectLan } from "../src/connect";
 import { keyPairFromSecret, publicB64 } from "../src/e2e";
-import { RpcTypes, type CreateTerminalResult } from "../src/messages";
+import { RpcTypes, type CreateTerminalResult, type WorkspacesResult } from "../src/messages";
 import type { WebSocketLike } from "../src/transport-ws";
 
 const PORT = Number(process.argv[2] || 6767);
@@ -58,6 +58,9 @@ function waitFor(cond: () => boolean, ms: number): Promise<void> {
     fail(`serverId 不一致：offer=${offer.serverId} server_info=${conn.serverInfo.serverId}（违反 spec §3.2）`);
   }
   console.log("· serverId 一致校验 OK：", offer.serverId);
+
+  const wsr = await conn.client.request<WorkspacesResult>(RpcTypes.hostWorkspacesList, {});
+  console.log("· host.workspaces.list →", wsr.workspaces.length, "工作区, active:", wsr.activeId ?? "(无)");
 
   const cr = await conn.client.request<CreateTerminalResult>(RpcTypes.terminalCreate, { cols: 80, rows: 24 });
   console.log("· terminal.create →", cr.terminalId);

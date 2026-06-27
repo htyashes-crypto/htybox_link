@@ -105,7 +105,7 @@
 
 ### 5.1 host 域
 - `host.info.request` → `response{ payload:{ serverId, hostName, appVersion, cwdDefault } }`：基础信息（与 server_info 冗余字段允许）。
-- `host.workspaces.list.request` → `response{ payload:{ workspaces:[{ id, name, path }] } }`：列工作区（对应 HtyBox 已打开工作区）。
+- `host.workspaces.list.request` → `response{ payload:{ workspaces:[{ id, name, path }], activeId? } }`：列工作区（HtyBox 桌面前端经本机 `set_workspaces` 命令发布其已打开工作区 + 当前激活；远程客户端据此镜像工作区与作用域）。`activeId` 可空。
 - 推送 `host.workspaces.update{ workspaces:[...] }`：工作区集合变化。
 
 ### 5.2 terminal 域
