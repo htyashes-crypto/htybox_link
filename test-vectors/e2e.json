@@ -1,0 +1,10 @@
+{
+  "_note": "TS 用 clientSecret/hostSecret 还原密钥对→断言公钥匹配；以 clientBox+nonce seal(plaintext)==sealed；open(sealed)==plaintext",
+  "clientPublicB64": "V9tLNZ8jrl4Ubk4lEgVnBHIlBjSMFQwUdT0Mkz0E1CE=",
+  "clientSecretB64": "CQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQk=",
+  "hostPublicB64": "E75P6uryBMf9M1j8nAByGIHRdCeBKCJ+xnTzf3/pe20=",
+  "hostSecretB64": "BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc=",
+  "nonceB64": "AwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMD",
+  "plaintextUtf8": "htybox-link e2e vector",
+  "sealedB64": "AwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMD4hAtJ28FfIvsllRntkimARY8AGSA6W08gV1ktOtHFvnY1ABwICY="
+}

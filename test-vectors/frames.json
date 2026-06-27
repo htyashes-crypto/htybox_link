@@ -1,0 +1,24 @@
+{
+  "_note": "TS 复现各帧的 hex 与 offer 的 url，必须与本文件完全一致",
+  "inputDataUtf8": "ls\r",
+  "inputFrameHex": "02026c730d",
+  "inputSlot": 2,
+  "offer": {
+    "hostName": "VECTOR",
+    "hostPublicKeyB64": "E75P6uryBMf9M1j8nAByGIHRdCeBKCJ+xnTzf3/pe20=",
+    "lan": {
+      "host": "192.168.0.10",
+      "port": 6767
+    },
+    "serverId": "srv-vector",
+    "v": 1
+  },
+  "offerUrl": "htybox://pair#offer=eyJ2IjoxLCJzZXJ2ZXJJZCI6InNydi12ZWN0b3IiLCJob3N0TmFtZSI6IlZFQ1RPUiIsImhvc3RQdWJsaWNLZXlCNjQiOiJFNzVQNnVyeUJNZjlNMWo4bkFCeUdJSFJkQ2VCS0NKK3huVHpmMy9wZTIwPSIsImxhbiI6eyJob3N0IjoiMTkyLjE2OC4wLjEwIiwicG9ydCI6Njc2N319",
+  "outputDataUtf8": "hi",
+  "outputFrameHex": "0101000000000000002a6869",
+  "outputRevision": 42,
+  "outputSlot": 1,
+  "resizeCols": 80,
+  "resizeFrameHex": "03007b22636f6c73223a38302c22726f7773223a32347d",
+  "resizeRows": 24
+}
