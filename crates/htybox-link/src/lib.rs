@@ -8,6 +8,7 @@ pub mod e2e;
 pub mod frame;
 pub mod handshake;
 pub mod offer;
+pub mod relay;
 pub mod rpc;
 pub mod terminal;
 

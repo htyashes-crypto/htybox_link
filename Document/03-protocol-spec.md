@@ -242,6 +242,7 @@ Host   → {"type":"e2ee_ready"}     // 双方各自 ECDH → 相同 shared_key
 - 心跳：`{"type":"ping"}` / `{"type":"pong"}`。
 - relay 转发的是 §2/§8 的密文帧字节，**不解析内层**；relay 不需要也不实现 §3–§7 任何语义。
 - 抢占：同 `serverId` 出现新控制连接时，relay 需校验（v1 可简单顶替；进阶加 Host 出示签名证明持有私钥）。
+- **实现绑定**：控制消息 Rust = `htybox-link::relay::RelayControl`（+ `control_url`/`data_url` 路径助手），中继服务端 = `htybox-relay` crate，Host 反连 = `ws_host`/`relay_client`；TS 客户端连接器 = `connectRelay`（客户端只用数据通道，控制通道是 Host↔relay 私有）。
 
 ## 10. 超时 / 重连 / 心跳（客户端实现约束）
 

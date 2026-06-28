@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fromB64 } from "../src/b64";
-import { connectLan } from "../src/connect";
+import { connectLan, connectRelay } from "../src/connect";
 import { generateKeyPair, publicB64, sharedKey, type KeyPair } from "../src/e2e";
 import { InnerKind, openFrame, sealFrame } from "../src/frames";
 import type { ConnectionOffer, ServerInfo } from "../src/messages";
@@ -119,5 +119,75 @@ describe("connectLan", () => {
     await expect(
       connectLan(offer, { clientId: "c4", appVersion: "t", wsFactory: () => new FakeWebSocket() }),
     ).rejects.toThrow(/lan/);
+  });
+});
+
+function makeRelayOffer(host: KeyPair): ConnectionOffer {
+  return {
+    v: 1,
+    serverId: "srv-1",
+    hostName: "TEST-HOST",
+    hostPublicKeyB64: publicB64(host),
+    relay: { endpoint: "relay.test:443", useTls: true },
+  };
+}
+
+describe("connectRelay", () => {
+  it("E2E 握手 + 装配 → 收到 server_info", async () => {
+    const host = generateKeyPair();
+    const ws = new FakeWebSocket();
+    installHost(ws, host, SERVER_INFO);
+    const p = connectRelay(makeRelayOffer(host), { clientId: "r1", appVersion: "t", connectionId: "conn1", wsFactory: () => ws });
+    ws.fireOpen();
+    const conn = await p;
+    expect(conn.serverInfo.serverId).toBe("srv-1");
+    conn.close();
+  });
+
+  it("数据通道 URL = wss://{endpoint}/session/{serverId}/{connectionId}", async () => {
+    const host = generateKeyPair();
+    const ws = new FakeWebSocket();
+    installHost(ws, host, SERVER_INFO);
+    let url = "";
+    const p = connectRelay(makeRelayOffer(host), {
+      clientId: "r2",
+      appVersion: "t",
+      connectionId: "CONN-XYZ",
+      wsFactory: (u) => {
+        url = u;
+        return ws;
+      },
+    });
+    ws.fireOpen();
+    await p;
+    expect(url).toBe("wss://relay.test:443/session/srv-1/CONN-XYZ");
+  });
+
+  it("useTls=false → ws:// 明文（本地/LAN relay）", async () => {
+    const host = generateKeyPair();
+    const ws = new FakeWebSocket();
+    installHost(ws, host, SERVER_INFO);
+    let url = "";
+    const offer: ConnectionOffer = { ...makeRelayOffer(host), relay: { endpoint: "127.0.0.1:6868", useTls: false } };
+    const p = connectRelay(offer, {
+      clientId: "r3",
+      appVersion: "t",
+      connectionId: "c",
+      wsFactory: (u) => {
+        url = u;
+        return ws;
+      },
+    });
+    ws.fireOpen();
+    await p;
+    expect(url).toBe("ws://127.0.0.1:6868/session/srv-1/c");
+  });
+
+  it("offer 无 relay → reject", async () => {
+    const host = generateKeyPair();
+    const offer: ConnectionOffer = { ...makeOffer(host) };
+    await expect(
+      connectRelay(offer, { clientId: "r4", appVersion: "t", wsFactory: () => new FakeWebSocket() }),
+    ).rejects.toThrow(/relay/);
   });
 });

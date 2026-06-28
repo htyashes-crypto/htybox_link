@@ -1,0 +1,21 @@
+[package]
+name = "htybox-relay"
+version = "0.1.0"
+edition = "2021"
+description = "HtyBox 双端 relay 中继：无状态 E2E 密文转发，按 serverId+connectionId 路由（spec §9）"
+license = "MIT"
+
+[[bin]]
+name = "htybox-relay"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "sync", "time", "io-util"] }
+axum = { version = "0.8", features = ["ws"] }
+futures-util = "0.3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+htybox-link = { path = "../htybox-link" }
+
+[dev-dependencies]
+tokio-tungstenite = "0.29"
