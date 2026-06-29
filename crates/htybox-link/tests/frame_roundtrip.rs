@@ -46,11 +46,11 @@ fn rpc_envelope_roundtrip() {
     let back: Request<CreateTerminalParams> = serde_json::from_str(&s).unwrap();
     assert_eq!(back.params.cols, 80);
 
-    let resp = Response::new(types::TERMINAL_SUBSCRIBE_RESP, "r1", SubscribeTerminalResult { slot: 3, revision: 7 });
+    let resp = Response::new(types::TERMINAL_SUBSCRIBE_RESP, "r1", SubscribeTerminalResult { slot: 3, revision: 7, cols: 80, rows: 24 });
     let s = serde_json::to_string(&resp).unwrap();
     assert!(s.contains("\"payload\":{"));
     let back: Response<SubscribeTerminalResult> = serde_json::from_str(&s).unwrap();
-    assert_eq!(back.payload, SubscribeTerminalResult { slot: 3, revision: 7 });
+    assert_eq!(back.payload, SubscribeTerminalResult { slot: 3, revision: 7, cols: 80, rows: 24 });
 
     let err = RpcError {
         kind: "rpc_error".into(),

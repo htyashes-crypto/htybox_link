@@ -149,6 +149,9 @@ pub struct SubscribeTerminalParams {
 pub struct SubscribeTerminalResult {
     pub slot: u8,
     pub revision: u64,
+    /// 订阅时终端当前尺寸（客户端据此设置渲染网格；远程不回改 PTY）。
+    pub cols: u16,
+    pub rows: u16,
 }
 
 /// 仅引用某终端（unsubscribe / kill）。

@@ -78,6 +78,9 @@ export interface SubscribeTerminalParams {
 export interface SubscribeTerminalResult {
   slot: number;
   revision: number;
+  /** 订阅时终端当前尺寸（客户端据此设置渲染网格；远程不回改 PTY）。 */
+  cols: number;
+  rows: number;
 }
 export interface TerminalRef {
   terminalId: string;

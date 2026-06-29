@@ -9,7 +9,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "smoke:connect": "tsx scripts/ws-smoke-connect.ts",
-    "smoke:relay": "tsx scripts/ws-smoke-relay.ts"
+    "smoke:relay": "tsx scripts/ws-smoke-relay.ts",
+    "smoke:resize": "tsx scripts/ws-smoke-resize.ts"
   },
   "dependencies": {
     "tweetnacl": "^1.0.3"

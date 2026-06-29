@@ -4,6 +4,7 @@
 import {
   classifyBinary,
   decodeFrame,
+  decodeResize,
   encodeFrame,
   encodeResize,
   InnerKind,
@@ -43,6 +44,7 @@ export interface DaemonClientOptions {
 }
 
 type OutputHandler = (revision: bigint, data: Uint8Array) => void;
+type ResizeHandler = (cols: number, rows: number) => void;
 type Pending = { resolve: (v: unknown) => void; reject: (e: unknown) => void };
 
 export class DaemonClient {
@@ -51,6 +53,7 @@ export class DaemonClient {
   private pending = new Map<string, Pending>();
   private events = new Map<string, Set<(payload: unknown) => void>>();
   private outputs = new Map<number, OutputHandler>();
+  private resizes = new Map<number, ResizeHandler>();
   private serverInfoWaiters: Array<(si: ServerInfo) => void> = [];
 
   constructor(private transport: Transport, private opts: DaemonClientOptions) {
@@ -105,14 +108,17 @@ export class DaemonClient {
     return () => void set!.delete(cb);
   }
 
-  /** 订阅终端：拿到 slot/revision 后，按 slot 路由 Output/Snapshot/Restore 给 onOutput。 */
+  /** 订阅终端：拿到 slot/revision/尺寸 后，按 slot 路由 Output/Snapshot/Restore 给 onOutput；
+   *  桌面 resize 时服务端推 Resize 帧，路由给 onResize（远程渲染器跟随尺寸，不回改 PTY）。 */
   async subscribeTerminal(
     terminalId: string,
     restore: RestoreMode,
     onOutput: OutputHandler,
+    onResize?: ResizeHandler,
   ): Promise<SubscribeTerminalResult> {
     const res = await this.request<SubscribeTerminalResult>(RpcTypes.terminalSubscribe, { terminalId, restore });
     this.outputs.set(res.slot, onOutput);
+    if (onResize) this.resizes.set(res.slot, onResize);
     return res;
   }
 
@@ -160,6 +166,12 @@ export class DaemonClient {
       if (h) {
         const { revision, data } = splitRevision(payload);
         h(revision, data);
+      }
+    } else if (opcode === Opcode.Resize) {
+      const h = this.resizes.get(slot);
+      if (h) {
+        const { cols, rows } = decodeResize(payload);
+        h(cols, rows);
       }
     }
   }
